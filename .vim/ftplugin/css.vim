@@ -8,10 +8,10 @@ set expandtab
 set tabstop=4
 
 " cindentやautoindent時や >> で挿入されるタブの幅
-set shiftwidth=4
+set shiftwidth=2
 
 " <TAB>, <BS>の使用などの編集操作をするときのタブが対応する空白の数
-set softtabstop=4
+set softtabstop=2
 
 " 新しい行を挿入したとき、現在行と同じインデントを適用する
 set autoindent
@@ -30,7 +30,7 @@ setlocal iskeyword& iskeyword+=-
 setlocal includeexpr=substitute(v:fname,'^\\/','','') | setlocal path+=./;/
 
 " Keymap
-inoremap <buffer> { <Space>{}<Left><CR>.<CR><ESC>kA<BS><Tab>
+
 
 " Plugin
 noremap <silent> <buffer> <Space>s :<C-u>CSScomb<CR>

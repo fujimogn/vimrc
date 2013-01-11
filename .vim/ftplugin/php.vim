@@ -27,14 +27,11 @@ function! PHPFoldSetting(lnum)
   elseif getline(a:lnum + 1) =~ ' \* '
     return 0
   elseif getline(a:lnum) =~ ' \* '
-    return 0    
-  else       
-    return '='   
+    return 0
+  else
+    return '='
   endif
 endfunction
 set foldmethod=expr foldexpr=PHPFoldSetting(v:lnum)
-
-" Keymap
-inoremap <buffer> { <Space>{}<Left><CR>.<CR><ESC>kA<BS><Tab>
 
 

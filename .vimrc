@@ -35,6 +35,7 @@ NeoBundle 'banyan/recognize_charcode.vim'
 NeoBundle 'thinca/vim-ref'
 NeoBundle 'thinca/vim-template'
 NeoBundle 'kana/vim-smartchr'
+NeoBundle 'kana/vim-smartinput'
 
 " Display
 NeoBundle 'Lokaltog/vim-powerline'
@@ -51,7 +52,7 @@ NeoBundle 'slim-template/vim-slim'
 NeoBundle 'tpope/vim-haml'
 
 " HTML
-NeoBundle 'taichouchou2/html5.vim'
+NeoBundle 'othree/html5.vim'
 NeoBundle 'mattn/zencoding-vim'
 
 " CSS
@@ -62,8 +63,8 @@ NeoBundle 'miripiruni/CSScomb-for-Vim'
 NeoBundle 'lilydjwg/colorizer'
 
 " JavaScript
-NeoBundle 'JavaScript-syntax'
-NeoBundle 'taichouchou2/vim-javascript'
+NeoBundle 'pangloss/vim-javascript'
+NeoBundle 'jelera/vim-javascript-syntax'
 NeoBundle 'kchmck/vim-coffee-script'
 
 " Markdown
@@ -80,7 +81,7 @@ if neobundle#exists_not_installed_bundles()
 endif
 
 "------------------------------------
-" en
+" Env
 "------------------------------------
 
 let $PATH = $PATH.':/usr/local/bin/'.':'.$HOME.'/bin'
@@ -146,19 +147,9 @@ set autowrite
 " ファイルの保存を確認する
 set confirm
 
-
-" function! s:remove_dust()
-    " let cursor = getpos(".")
-    " " 保存時に行末の空白を除去する
-    " %s/\s\+$//ge
-    " " 保存時にtabを2スペースに変換する
-    " %s/\t/  /ge
-    " call setpos(".", cursor)
-    " unlet cursor
-" endfunction
-" autocmd BufWritePre * call <SID>remove_dust()
-
-
+" 保存時に行末の空白を除去する
+" http://d.hatena.ne.jp/thinca/20120130/1327919787
+autocmd BufWritePre * :%s/\S\zs\s\+$//e
 
 "------------------------------------
 " Display
@@ -186,7 +177,7 @@ set splitbelow
 set splitright
 
 " カーソルの設定
-" set cursorline
+set cursorline
 " set cursorcolumn
 
 " カーソルの上または下に表示する最小限の行数
@@ -313,11 +304,29 @@ augroup END
 "------------------------------------
 " fold
 "------------------------------------
+" フォールドの有効
+set foldenable
 
+" フォールドする種類
 set foldmethod=marker
-set foldcolumn=3
-set foldlevel=0
 
+" ウィンドウの端に確保される折畳を示すカラムの幅を指定する数
+" set foldcolumn=3
+
+" フォールドするレベル(初期値：0)
+" 'foldlevel'が0の時には、全ての折畳が閉じられる。
+" 'foldlevel'が正の時には、設定値より大きなレベルの折畳が閉じられる。
+" 'foldlevel'が非常に大きい時は、全ての折畳が開かれる。
+" set foldlevel=1
+
+" ファイルを開いたときのフォールドレベルの値(初期値：-1)
+set foldlevelstart=-1
+
+" 折り畳む最小行数(初期値：1)
+set foldminlines=3
+
+" 折り畳むネストの最大値(初期値：20)
+set foldnestmax=2
 
 "------------------------------------
 " Mouse
@@ -382,7 +391,7 @@ nnoremap vy vawy
 vnoremap v $h
 
 " タブ
-nnoremap <C-t>  <Nop>
+nnoremap <C-t>   <Nop>
 nnoremap <C-t>c  :<C-u>tabnew<CR>
 nnoremap <C-t>x  :<C-u>tabclose<CR>
 nnoremap <C-t>o  :<C-u>tabonly<CR>
@@ -550,15 +559,17 @@ function! s:my_crinsert()
     return pumvisible() ? neocomplcache#close_popup() : "\<Cr>"
 endfunction
 " inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
-inoremap <silent> <CR> <C-R>=<SID>my_crinsert()<CR>
+inoremap <buffer><silent> <CR> <C-R>=<SID>my_crinsert()<CR>
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " <TAB> で保管
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 
 " スニペットの展開
 " imap <C-k>     <Plug>(neocomplcache_snippets_expand)
 " smap <C-k>     <Plug>(neocomplcache_snippets_expand)
-" imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
 " 前回行われた補完をキャンセル
 inoremap <expr><C-g>     neocomplcache#undo_completion()
 
@@ -676,18 +687,20 @@ endif
 "------------------------------------
 " syntastic
 "------------------------------------"
-
-" とりあえず
-let g:syntastic_enable_highlighting=0
-let g:syntastic_auto_jump=1
 let g:syntastic_enable_signs=1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_mode_map = {
-      \  'mode': 'active',
-      \ 'active_filetypes': ['ruby', 'javascript'],
-      \ 'passive_filetypes': ['html']
-      \ }
-let g:syntastic_javascript_checker = 'jshint'
+let g:syntastic_auto_loc_list=2
+
+
+" let g:syntastic_enable_highlighting=0
+" let g:syntastic_auto_jump=1
+" let g:syntastic_enable_signs=1
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_mode_map = {
+      " \  'mode': 'active',
+      " \ 'active_filetypes': ['ruby', 'javascript'],
+      " \ 'passive_filetypes': ['html']
+      " \ }
+" let g:syntastic_javascript_checker = 'jshint'
 
 
 "------------------------------------
@@ -809,25 +822,26 @@ xmap L <Plug>(textmanip-move-right)
 "------------------------------------
 " vim-smartchr
 "------------------------------------
-inoremap <buffer> ' ''<Esc>i
-inoremap <buffer> " ""<Esc>i
-inoremap <buffer> ( ()<Esc>i
-inoremap <buffer> [ []<Esc>i
-inoremap <buffer> { {}<Esc>i
+" inoremap <buffer> ' ''<Esc>i
+" inoremap <buffer> " ""<Esc>i
+" inoremap <buffer> ( ()<Esc>i
+" inoremap <buffer> [ []<Esc>i
+" inoremap <buffer> { {}<Esc>i
 
-inoremap <buffer><expr> + smartchr#one_of(' + ', '++', '+')
-inoremap <buffer><expr> - smartchr#one_of(' - ', '--', '-')
-inoremap <buffer><expr> / smartchr#one_of(' / ', '// ', '/')
-inoremap <buffer><expr> & smartchr#one_of(' & ', ' && ', '&')
+inoremap <buffer><expr> + smartchr#one_of('+', ' + ', '++')
+inoremap <buffer><expr> - smartchr#one_of('-', ' - ', '--')
+inoremap <buffer><expr> / smartchr#one_of('/', ' / ', '// ')
+inoremap <buffer><expr> & smartchr#one_of('&', ' & ', ' && ')
 
 inoremap <buffer><expr> , smartchr#one_of(', ', ',')
 
 inoremap <buffer><expr> > smartchr#one_of('>', ' => ')
 inoremap <buffer><expr> = smartchr#one_of('=', ' = ', ' == ', ' === ')
 inoremap <buffer><expr> ! smartchr#one_of('!', ' != ')
+inoremap <buffer><expr> <Bar> smartchr#one_of('<Bar>', ' <Bar><Bar> ')
 
-inoremap <buffer><expr> ? smartchr#one_of('? ', '?')
-inoremap <buffer><expr> : smartchr#one_of(': ', '::', ':')
+inoremap <buffer><expr> ? smartchr#one_of('?', '? ')
+inoremap <buffer><expr> : smartchr#one_of(':', ': ', '::')
 
 inoremap <buffer><expr> } smartchr#one_of('}', '}<cr>')
 inoremap <buffer><expr> ; smartchr#one_of(';', ';<cr>')
@@ -895,9 +909,9 @@ let g:miniBufExplMapWindowNavArrows=1
 let g:miniBufExplMapCTabSwitchBufs=1
 let g:miniBufExplModSelTarget=1
 let g:miniBufExplSplitToEdge=1
-nnoremap <C-d> :<C-u>bd<CR>
-nnoremap <C-n> :<C-u>MBEbn<CR>
-nnoremap <C-p> :<C-u>MBEbp<CR>
+nnoremap <silent> <C-d> :<C-u>bd<CR>
+nnoremap <silent> <C-n> :<C-u>MBEbn<CR>
+nnoremap <silent> <C-p> :<C-u>MBEbp<CR>
 
 hi MBEVisibleActive guifg=#A6E22E guibg=fg ctermfg=118
 hi MBEVisibleChangedActive guifg=#F1266F guibg=fg ctermfg=161
