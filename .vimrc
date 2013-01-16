@@ -1,102 +1,127 @@
+" vi:set ts=2 sts=2 sw=2 tw=0:
 "=============================================================================
 " FILE: .vimrc
-" AUTHOR:  Ayumi Fujii <fujimogn@gmail.com>
-" Last Modified: 02 Jan 2013.
+" AUTHOR: Ayumi Fujii <fujimogn@gmail.com>
+" Last Modified: 2013/01/16 04:06:28
 "=============================================================================
 
+
+set nocompatible
 "------------------------------------
 " NeoBundle
 "------------------------------------
 
-set nocompatible
-
 if has('vim_starting')
-    set runtimepath+=~/.vim/bundle/neobundle.vim/
-end
-
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
 call neobundle#rc(expand('~/.vim/bundle/'))
 
-
 " Utils/Edit
-NeoBundle 'Shougo/vimproc'
+NeoBundle 'Shougo/vimproc', { 'build': {
+      \ 'mac' : 'make -f make_mac.mak',
+      \ 'unix': 'make -f make_unix.mak',
+      \ 'cygwin': 'make -f make_cygwin.mak',
+      \ }}
 NeoBundle 'Shougo/unite.vim'
-NeoBundle 'Shougo/vimfiler'
-NeoBundle 'open-browser.vim'
-NeoBundle 'airblade/vim-rooter'
-NeoBundle 'thinca/vim-ambicmd'
 NeoBundle 'Shougo/neocomplcache'
+NeoBundle 'Shougo/neocomplcache-rsense'
 NeoBundle 'Shougo/neosnippet'
-NeoBundle 'scrooloose/nerdcommenter'
-NeoBundle 'vim-scripts/Align'
-NeoBundle 't9md/vim-textmanip'
-NeoBundle 'fholgado/minibufexpl.vim'
-" NeoBundle 'vim-scripts/YankRing.vim'
+NeoBundle 'Lokaltog/vim-easymotion'
 NeoBundle 'banyan/recognize_charcode.vim'
-NeoBundle 'thinca/vim-ref'
-NeoBundle 'thinca/vim-template'
+NeoBundle 'fholgado/minibufexpl.vim'
 NeoBundle 'kana/vim-smartchr'
 NeoBundle 'kana/vim-smartinput'
+NeoBundle 'open-browser.vim'
+NeoBundle 'scrooloose/nerdcommenter'
+NeoBundle 'scrooloose/syntastic'
+NeoBundle 't9md/vim-textmanip'
+NeoBundle 'taku-o/vim-catn'
+NeoBundle 'thinca/vim-quickrun'
+NeoBundle 'thinca/vim-template'
+NeoBundle 'tpope/vim-endwise'
+NeoBundle 'h1mesuke/vim-alignta'
 
 " Display
 NeoBundle 'Lokaltog/vim-powerline'
 NeoBundle 'nathanaelkane/vim-indent-guides'
 
-NeoBundle 'scrooloose/syntastic'
-NeoBundle 'thinca/vim-quickrun'
-
 " Ruby
 NeoBundle 'vim-ruby/vim-ruby'
 NeoBundle 'tpope/vim-rails'
-NeoBundle 'tpope/vim-endwise'
+NeoBundle 'taichouchou2/alpaca_complete',{
+      \ 'depends' : 'tpope/vim-rails',
+      \ 'build' : {
+      \     'mac' : 'gem install alpaca_complete',
+      \     'unix' : 'gem install alpaca_complete',
+      \  }}
+NeoBundle 'ujihisa/unite-rake'
+NeoBundle 'basyura/unite-rails'
+NeoBundle 'skwp/vim-rspec'
 NeoBundle 'slim-template/vim-slim'
 NeoBundle 'tpope/vim-haml'
 
 " HTML
-NeoBundle 'othree/html5.vim'
 NeoBundle 'mattn/zencoding-vim'
+NeoBundle 'othree/html5.vim'
+NeoBundle 'tpope/vim-ragtag'
 
 " CSS
 NeoBundle 'hail2u/vim-css3-syntax'
-NeoBundle 'groenewege/vim-less'
-NeoBundle 'cakebaker/scss-syntax.vim'
+NeoBundle 'hail2u/vim-css-syntax'
 NeoBundle 'miripiruni/CSScomb-for-Vim'
 NeoBundle 'lilydjwg/colorizer'
+NeoBundle 'cakebaker/scss-syntax.vim'
+NeoBundle 'groenewege/vim-less'
 
 " JavaScript
 NeoBundle 'pangloss/vim-javascript'
 NeoBundle 'jelera/vim-javascript-syntax'
 NeoBundle 'kchmck/vim-coffee-script'
 
-" Markdown
-NeoBundle 'vim-scripts/Markdown'
+" PHP
+NeoBundle 'everzet/phpfolding.vim'
+NeoBundle 'stephpy/vim-php-cs-fixer'
+NeoBundle 'stephpy/vim-phpdoc'
+NeoBundle 'violetyk/cake.vim'
 
+" Markdown
+NeoBundle 'vim-sripts/Markdown'
+
+
+NeoBundleCheck
 
 filetype plugin indent on
 
-if neobundle#exists_not_installed_bundles()
-  echomsg 'Not installed bundles : ' .
-        \ string(neobundle#get_not_installed_bundle_names())
-  echomsg 'Please execute ":NeoBundleInstall" command.'
-  "finish
-endif
+function! g:has_plugin(name)
+  let nosuffix = a:name =~? '\.vim$' ? a:name[:-5] : a:name
+  let suffix   = a:name =~? '\.vim$' ? a:name      : a:name . '.vim'
+  return &rtp =~# '\c\<' . nosuffix . '\>'
+        \ || globpath(&rtp, suffix, 1) != ''
+        \ || globpath(&rtp, nosuffix, 1) != ''
+        \ || globpath(&rtp, 'autoload/' . suffix, 1) != ''
+        \ || globpath(&rtp, 'autoload/' . tolower(suffix), 1) != ''
+endfunction
+
+
 
 "------------------------------------
 " Env
 "------------------------------------
 
-let $PATH = $PATH.':/usr/local/bin/'.':'.$HOME.'/bin'
+let g:username='Ayumi Fujii'
 let g:email='fujimogn@gmail.com'
-let g:username='fujimogn'
+
+let $PATH = $PATH.':/usr/local/bin/'.':'.$HOME.'/bin'
 
 "------------------------------------
 " Basic
 "------------------------------------
 
-" デフォルトエンコード"
-set encoding=utf-8
+" エンコード
+set encoding=utf-8 fileencodings=utf-8,ucs-bom,iso-2022-jp,euc-jp,cp932
 
 " 改行コード
-set fileformats=unix,dos,mac
+set fileformat=unix fileformats=unix,dos,mac
 
 " 起動時のメッセージを表示しない
 set shortmess+=I
@@ -115,12 +140,13 @@ set clipboard+=unnamed
 " History
 "------------------------------------
 
-set autowrite
 set hidden
 
+" set nobackup
 set backup
 set backupdir=$HOME/.tmp
 
+" set noswapfile
 set swapfile
 set directory=$HOME/.tmp
 
@@ -129,34 +155,38 @@ set undodir=$HOME/.tmp
 
 set history=10000
 set updatetime=500
-let g:svbfre = '.\+'
 
 
-
-"------------------------------------
-" Save
-"------------------------------------
+" "------------------------------------
+" " Save
+" "------------------------------------
 
 " 外部のエディタで編集中のファイルが変更されたら、自動的に読み直す
 set autoread
 
+" バッファを自動的に保存する
 " :next, :rewind, :last, :first, :previous, :stop, :suspend, :tag, :! :make,
 " CTRL-], CTRL-^ のコマンドを実行するたび、ファイルが変更されていれば、そのファイルを保存する
-set autowrite
+" set autowrite
 
 " ファイルの保存を確認する
 set confirm
 
 " 保存時に行末の空白を除去する
 " http://d.hatena.ne.jp/thinca/20120130/1327919787
-autocmd BufWritePre * :%s/\S\zs\s\+$//e
+if has('autocmd')
+  autocmd BufWritePre * :%s/\S\zs\s\+$//e
+endif
 
 "------------------------------------
 " Display
 "------------------------------------
 
 " 行番号を表示する
-set number
+" set number
+
+" 相対行番号を有効にする
+set relativenumber
 
 " タブ文字、行末など不可視文字を表示する
 set list
@@ -178,7 +208,13 @@ set splitright
 
 " カーソルの設定
 set cursorline
-" set cursorcolumn
+
+" カレントウィンドウにのみ罫線を引く
+augroup cch
+  autocmd! cch
+  autocmd WinLeave * set nocursorline
+  autocmd WinEnter,BufRead * set cursorline
+augroup END
 
 " カーソルの上または下に表示する最小限の行数
 set scrolloff=10
@@ -186,12 +222,9 @@ set scrolloff=10
 " カーソルの右または左に、表示する文字数
 set sidescrolloff=10
 
-" ウィンドウの最後の行ができる限りまで表示される。含まれないと、最後の行が収まりきらないならその行は "@" と表示される
-set display=lastline
-
 set textwidth=80
 if exists('&colorcolumn')
-    set colorcolumn=+1
+  set colorcolumn=+1
 endif
 
 " □とか○の文字があってもカーソル位置がずれないようにする
@@ -199,31 +232,30 @@ if exists('&ambiwidth')
   set ambiwidth=double
 endif
 
-"------------------------------------
-" color
-"------------------------------------
+" コマンド実行中は再描画しない
+set lazyredraw
 
-if $TERM =~ '^xterm'
-  set t_Co=256
-elseif $TERM =~ '^screen-bce'
-  set t_Co=256
-elseif $TERM =~ '^rxvt'
-  set t_Co=88
-elseif $TERM =~ '^linux'
-  set t_Co=8
-else
-  set t_Co=16
-endif
+" 高速ターミナル接続を行う
+set ttyfast
+
+
+" "------------------------------------
+" " color
+" "------------------------------------
+
+syntax enable
+
+set t_Co=256
 
 colorscheme monokai_256
 
 
-"------------------------------------
-" Statusline
-"------------------------------------
+" "------------------------------------
+" " Statusline
+" "------------------------------------
 
 " 常にステータスラインを表示する
-set laststatus=2
+" set laststatus=2
 
 " カーソルが何行目の何列目に置かれているかを表示する
 set ruler
@@ -241,12 +273,16 @@ set showcmd
 
 " 検索をファイルの末尾まで検索したら、ファイルの先頭へループする
 set wrapscan
+
 " 検索結果をハイライトする
 set hlsearch
+
 " インクリメンタルサーチを行う
 set incsearch
+
 " 検索で大文字小文字を区別しない
 set ignorecase
+
 " 検索で小文字なら大文字を無視、大文字なら無視しない設定
 set smartcase
 
@@ -256,8 +292,11 @@ set smartcase
 " Edit
 "------------------------------------
 
-" どんな設定の時も勝手に改行しないように
 set formatoptions=q
+set fo-=t fo-=c fo -=r fo-=o
+if has('autocmd')
+  autocmd FileType * setlocal fo-=t fo-=c fo-=r fo-=o
+endif
 
 " カーソルを行頭、行末で止まらないようにする
 set whichwrap=b,s,h,l,<,>,[,]
@@ -272,8 +311,28 @@ set imsearch=0
 " Visual blockモードでフリーカーソルを有効にする
 set virtualedit+=block
 
+" ファイルを開いた時に、以前のカーソル位置を復元する
+augroup restoreCursor
+  autocmd!
+  autocmd BufReadPost *
+        \ if line("'\"") > 1 && line("'\"") <= line('$') |
+        \   exe "normal! g`\"" |
+        \ endif
+augroup END
+
+"------------------------------------
+" Indent
+"------------------------------------
+
+" 新しい行を挿入したとき、現在行と同じインデントを適用する
+set autoindent
+
 " タブを使わないスペースにする ( タブを入力するときはc-v<TAB> )
 set expandtab
+
+" 行頭の余白内で <TAB> を使う際 shiftwidth の数だけインデントする。
+" 行頭以外では 'tabstop' の数だけ空白が挿入される。初期値：オフ
+set smarttab
 
 " 可視のタブ幅。4スペース分
 set tabstop=2
@@ -282,24 +341,9 @@ set tabstop=2
 set shiftwidth=2
 
 " <TAB>, <BS>の使用などの編集操作をするときのタブが対応する空白の数
+" 0の場合はtabstopと同じ
 set softtabstop=2
 
-" 新しい行を挿入したとき、現在行と同じインデントを適用する
-set autoindent
-
-" 行頭の余白内で <TAB> を使う際 shiftwidth の数だけインデントする。
-" 行頭以外では 'tabstop' の数だけ空白が挿入される。初期値：オフ
-set smarttab
-
-
-" ファイルを開いた時に、以前のカーソル位置を復元する
-augroup restoreCursor
-  autocmd!
-  autocmd BufReadPost *
-    \ if line("'\"") > 1 && line("'\"") <= line('$') |
-    \   exe "normal! g`\"" |
-    \ endif
-augroup END
 
 "------------------------------------
 " fold
@@ -308,7 +352,7 @@ augroup END
 set foldenable
 
 " フォールドする種類
-set foldmethod=marker
+" set foldmethod=marker
 
 " ウィンドウの端に確保される折畳を示すカラムの幅を指定する数
 " set foldcolumn=3
@@ -332,11 +376,9 @@ set foldnestmax=2
 " Mouse
 "------------------------------------
 
-" set mouse=a
-" set guioptions+=a
-" set ttymouse=xterm2
-
-
+set mouse=a
+set guioptions+=a
+set ttymouse=xterm2
 
 "------------------------------------
 " Keymap lader
@@ -348,22 +390,11 @@ let mapleader=","
 "-------------------------------------------------------------------------------
 " Keymap
 "-------------------------------------------------------------------------------
-" コマンド       ノーマルモード 挿入モード コマンドラインモード ビジュアルモード
-" map/noremap           @            -              -                  @
-" nmap/nnoremap         @            -              -                  -
-" imap/inoremap         -            @              -                  -
-" cmap/cnoremap         -            -              @                  -
-" vmap/vnoremap         -            -              -                  @
-" map!/noremap!         -            @              @                  -
-"----------------------------------------------------------------------------
 
 " : ; 入れ替え
-noremap ; :
 noremap : ;
+noremap ; :
 
-" インサートモードを抜ける
-inoremap jj <ESC>
-inoremap kk <ESC>
 
 " 基本移動
 nnoremap j gj
@@ -395,35 +426,24 @@ nnoremap <C-t>   <Nop>
 nnoremap <C-t>c  :<C-u>tabnew<CR>
 nnoremap <C-t>x  :<C-u>tabclose<CR>
 nnoremap <C-t>o  :<C-u>tabonly<CR>
-nnoremap <C-t>n  gt
+nnoremap <C-t>n  <C-u>execute 'tabnext' 1 + (tabpagenr() + v:count1 - 1) % tabpagenr('$')<CR>
 nnoremap <C-t>p  gT
 
-" Return で改行
-" nnoremap <CR> :<C-u>call append(expand('.'), '')<CR>ji
-
-" 空行のインデントを削除しないようにする
-" http://yakinikunotare.boo.jp/orebase2/vim/dont_delete_blank_line_indent
-nnoremap o oX<C-h>
-nnoremap O OX<C-h>
-inoremap <CR> <CR>X<C-h>
-
-
 " バッファ
-" nnoremap <Space>1 :e #1<CR>
-" nnoremap <Space>2 :e #2<CR>
-" nnoremap <Space>3 :e #3<CR>
-" nnoremap <Space>4 :e #4<CR>
-" nnoremap <Space>5 :e #5<CR>
-" nnoremap <Space>6 :e #6<CR>
-" nnoremap <Space>7 :e #7<CR>
-" nnoremap <Space>8 :e #8<CR>
-" nnoremap <Space>9 :e #9<CR>
-" nnoremap <Space>[ :<C-u>bp<CR>
-" nnoremap <Space>] :<C-u>bn<CR>
-
+nnoremap <Space>1 :e #1<CR>
+nnoremap <Space>2 :e #2<CR>
+nnoremap <Space>3 :e #3<CR>
+nnoremap <Space>4 :e #4<CR>
+nnoremap <Space>5 :e #5<CR>
+nnoremap <Space>6 :e #6<CR>
+nnoremap <Space>7 :e #7<CR>
+nnoremap <Space>8 :e #8<CR>
+nnoremap <Space>9 :e #9<CR>
+nnoremap <Space>[ :<C-u>bp<CR>
+nnoremap <Space>] :<C-u>bn<CR>
 
 " 検索ハイライトをクリア
-nnoremap <silent><ESC><ESC> :nohlsearch<CR><ESC>
+nnoremap <ESC><ESC> :<C-u>nohlsearch<CR>
 
 " Fold
 inoremap zz <C-O>za
@@ -441,10 +461,23 @@ vnoremap <expr> h col('.') == 1 && foldlevel(line('.')) > 0 ? 'zcgv' : 'h'
 " 折畳上で l を押すと選択範囲に含まれる折畳を開く。
 vnoremap <expr> l foldclosed(line('.')) != -1 ? 'zogv0' : 'l'
 
-cnoremap <C-p> <Up>
-cnoremap <Up>  <C-p>
-cnoremap <C-n> <Down>
-cnoremap <Down>  <C-n>
+" Creating underline/overline headings for markup languages
+" Inspired by http://sphinx.pocoo.org/rest.html#sections
+nnoremap <leader>1 yyPVr=jyypVr=
+nnoremap <leader>2 yyPVr*jyypVr*
+nnoremap <leader>3 yyPVr-jyypVr-
+nnoremap <leader>4 yypVr=
+nnoremap <leader>5 yypVr-
+nnoremap <leader>6 yypVr^
+nnoremap <leader>7 yypVr
+
+" 日付挿入
+nnoremap <leader>time i<C-R>=strftime('%H:%M')<CR><ESC>
+nnoremap <leader>date i<C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR><ESC>
+
+" インサートモードを抜ける
+inoremap jj <ESC>
+inoremap kk <ESC>
 
 " 挿入モードのキーバインドをemacs風に
 inoremap <C-a> <Home>
@@ -455,29 +488,23 @@ inoremap <C-n> <Down>
 inoremap <C-p> <Up>
 inoremap <C-h> <BS>
 inoremap <C-d> <Del>
-inoremap <C-k> <C-o>D
+" inoremap <C-k> <C-o>D
 inoremap <C-y> <C-o>P
 inoremap <C-u> <C-o>d0
 
-" 括弧までを消したり置き換えたりする
-" http://vim-users.jp/2011/04/hack214/
-vnoremap ( t(
-vnoremap ) t)
-onoremap ( t(
-onoremap ) t)
 
-" 保存・終了
-nnoremap <Space>w :<C-u>write<Return>
-nnoremap <Space>q :<C-u>quit<Return>
+cnoremap <C-p> <Up>
+cnoremap <Up>  <C-p>
+cnoremap <C-n> <Down>
+cnoremap <Down>  <C-n>
 
-" 日付挿入
-nnoremap <leader>time i<C-R>=strftime('%H:%M')<CR><ESC>
-nnoremap <leader>date i<C-R>=strftime('%Y-%m-%dT%H:%M:%S+09:00')<CR><ESC>
+set pastetoggle=<F2>
+
 
 "------------------------------------
 " misc command
 "------------------------------------
-"
+
 command! Editrc edit $MYVIMRC
 command! Editgrc edit $MYGVIMRC
 command! Reloadrc source $MYVIMRC
@@ -486,489 +513,487 @@ command! Reloadgrc source $MYGVIMRC
 nnoremap <Space>. :<C-u>Editrc<Cr>
 nnoremap <Space>, :<C-u>Reloadrc<Cr>
 
-command! Cp932 edit ++enc=cp932
-command! Eucjp edit ++enc=euc-jp
-command! Iso2022jp edit ++enc=iso-2022-jp
-command! Utf8 edit ++enc=utf-8
-command! Jis Iso2022jp
-command! Sjis Cp932
+command! -bang -bar -complete=file -nargs=? Cp932 edit<bang> ++encoding=cp932       <args>
+command! -bang -bar -complete=file -nargs=? Eucjp edit<bang> ++encoding=euc-jp      <args>
+command! -bang -bar -complete=file -nargs=? Jis   edit<bang> ++encoding=iso-2022-jp <args>
+command! -bang -bar -complete=file -nargs=? Utf8  edit<bang> ++encoding=utf-8       <args>
+command! -bang -bar -complete=file -nargs=? Dos   edit<bang> ++fileformat=dos       <args>
+command! -bang -bar -complete=file -nargs=? Mac   edit<bang> ++fileformat=mac       <args>
+command! -bang -bar -complete=file -nargs=? Unix  edit<bang> ++fileformat=unix      <args>
 
 command! Delnbsp %s/ / /g
+
+
+
 
 "------------------------------------
 " neocomplcache
 "------------------------------------
 
-" AutoComplPopの自動起動を無効
-let g:acp_enableAtStartup = 0
+if g:has_plugin( 'neocomplcache' )
+  
+  " AutoComplPopの自動起動を無効
+  let g:acp_enableAtStartup = 0
 
-" 起動時に有効
-let g:neocomplcache_enable_at_startup = 1
+  " 起動時に有効
+  let g:neocomplcache_enable_at_startup = 1
 
-" 入力に大文字が入力されている場合、大文字小文字の区別をする
-let g:neocomplcache_enable_smart_case = 1
+  " 入力に大文字が入力されている場合、大文字小文字の区別をする
+  let g:neocomplcache_enable_smart_case = 1
 
-" 大文字小文字を区切りとしたあいまい検索を行うかどうか。
-" DTと入力するとD*T*と解釈され、DateTime等にマッチする。
-let g:neocomplcache_enable_camel_case_completion = 1
+  " 大文字小文字を区切りとしたあいまい検索を行うかどうか。
+  " DTと入力するとD*T*と解釈され、DateTime等にマッチする。
+  let g:neocomplcache_enable_camel_case_completion = 1
 
-" アンダーバーを区切りとしたあいまい検索を行うかどうか。
-" m_sと入力するとm*_sと解釈され、mb_substr等にマッチする。
-let g:neocomplcache_enable_underbar_completion = 1
+  " アンダーバーを区切りとしたあいまい検索を行うかどうか。
+  " m_sと入力するとm*_sと解釈され、mb_substr等にマッチする。
+  let g:neocomplcache_enable_underbar_completion = 1
 
-" シンタックスファイル中で、補完の対象となるキーワードの最小長さ。初期値は4
-let g:neocomplcache_min_syntax_length = 3
+  " シンタックスファイル中で、補完の対象となるキーワードの最小長さ。初期値は4
+  let g:neocomplcache_min_syntax_length = 3
 
-let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+  let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
 
-" Define file-type dependent dictionaries.
-let g:neocomplcache_dictionary_filetype_lists = {
+
+
+  " Define file-type dependent dictionaries.
+  let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
-    \ 'vimshell' : $HOME.'/.vimshell_hist',
-    \ 'scheme' : $HOME.'/.gosh_completions'
+    \ 'java'        : $HOME . '/.vim/dict/java.dict',
+    \ 'c'           : $HOME . '/.vim/dict/c.dict',
+    \ 'cpp'         : $HOME . '/.vim/dict/cpp.dict',
+    \ 'javascript'  : $HOME . '/.vim/dict/javascript.dict',
+    \ 'objc'        : $HOME . '/.vim/dict/objc.dict',
+    \ 'perl'        : $HOME . '/.vim/dict/perl.dict',
+    \ 'php'         : $HOME . '/.vim/dict/php.dict',
+    \ 'wordpress'   : $HOME . '/.vim/dict/wordpress.dict',
+    \ 'vim'         : $HOME . '/.vim/dict/vim.dict'
     \ }
 
-" Define keyword, for minor languages
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
 
-" Enable omni completion. Not required if they are already set elsewhere in .vimrc
-autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+  " Define keyword, for minor languages
+  if !exists('g:neocomplcache_keyword_patterns')
+    " let g:neocomplcache_keyword_patterns = {}
+  endif
 
-" Enable heavy omni completion, which require computational power and may stall the vim.
-if !exists('g:neocomplcache_omni_patterns')
-  let g:neocomplcache_omni_patterns = {}
-endif
-let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
-let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+  " Enable omni completion. Not required if they are already set elsewhere in .vimrc
 
-" Keymap
-"
-" <CR> で確定してポップアップを閉じる
-" http://starzero.hatenablog.com/entry/20120920/1348105635
-function! s:my_crinsert()
+  if has('autocmd')
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    autocmd FileType html setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+    autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+  endif
+
+  " Enable heavy omni completion, which require computational power and may stall the vim.
+  if !exists('g:neocomplcache_omni_patterns')
+    let g:neocomplcache_omni_patterns = {}
+  endif
+  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+  let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+  let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
+  let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+
+  " <CR> で確定してポップアップを閉じる
+  " http://starzero.hatenablog.com/entry/20120920/1348105635
+  function! s:my_crinsert()
     return pumvisible() ? neocomplcache#close_popup() : "\<Cr>"
-endfunction
-" inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
-inoremap <buffer><silent> <CR> <C-R>=<SID>my_crinsert()<CR>
+  endfunction
+  inoremap <silent> <CR> <C-R>=<SID>my_crinsert()<CR>
 
-" SuperTab like snippets behavior.
-imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+  " 前回行われた補完をキャンセル
+  inoremap <expr><C-g>     neocomplcache#undo_completion()
 
-" <TAB> で保管
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-
-" スニペットの展開
-" imap <C-k>     <Plug>(neocomplcache_snippets_expand)
-" smap <C-k>     <Plug>(neocomplcache_snippets_expand)
-" 前回行われた補完をキャンセル
-inoremap <expr><C-g>     neocomplcache#undo_completion()
-
-" 補完候補のなかから、共通する部分を補完。シェルの補完のような動作
-" inoremap <expr><C-l>     neocomplcache#complete_common_string()
-
-" <C-h>, <BS>: close popup and delete backword char.
-" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><C-y>  neocomplcache#close_popup()
-" inoremap <expr><C-e>  neocomplcache#cancel_popup()
+endif
 
 
 "------------------------------------
 " neosnippet
 "------------------------------------
-if !exists("g:neosnippet#snippets_directory")
-  let g:neosnippet#snippets_directory=""
+
+if g:has_plugin( 'neosnippet' )
+
+  if !exists("g:neosnippet#snippets_directory")
+    let g:neosnippet#snippets_directory=""
+  endif
+  let g:neosnippet#snippets_directory='~/.vim/snippets'
+
+  imap <expr><TAB> neosnippet#expandable() <Bar><bar> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+  smap <expr><TAB> neosnippet#expandable() <Bar><bar> neosnippet#jumpable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+  "スニペットファイルを編集する
+  nnoremap <Space>nes :NeoSnippetEdit<CR>
+
+  if has('conceal')
+    set conceallevel=2 concealcursor=i
+  endif
+
 endif
-let g:neosnippet#snippets_directory='~/.vim/snippets'
 
-imap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : pumvisible() ? "\<C-n>" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable() ? "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 
-"スニペットファイルを編集する
-nnoremap <Space>nes :NeoSnippetEdit<CR>
+"------------------------------------
+" neocomplcache-rsense
+"------------------------------------
+
+if g:has_plugin( 'neocomplcache-rsense' )
+  if (!exists('g:neocomplcache#sources#rsense#home_directory')) &&
+        \ (executable(expand( $RSENSE_HOME.'/bin/rsense')))
+    let g:neocomplcache#sources#rsense#home_directory = expand($RSENSE_HOME)
+  endif
+end
+
 
 
 "------------------------------------
 " Unite
 "------------------------------------
 
-"インサートモードで開始しない
-let g:unite_enable_start_insert = 0
+if g:has_plugin( 'unite' )
+  let g:unite_source_file_mru_limit = 200
+  let g:unite_enable_start_insert = 1
 
-"unite prefix key.
-nnoremap [unite] <Nop>
-nmap <Space>u [unite]
+  " unite prefix key.
+  nnoremap [unite] <Nop>
+  xnoremap [unite] <Nop>
+  nmap <Space>u [unite]
+  xmap <Space>u [unite]
+  nmap f [unite]
+  xmap f [unite]
 
-" バッファ一覧
-nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
-" ファイル一覧
-nnoremap <silent> [unite]f :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-" レジスタ一覧
-nnoremap <silent> [unite]r :<C-u>Unite -buffer-name=register register<CR>
-" 最近使用したファイル一覧
-nnoremap <silent> [unite]m :<C-u>Unite file_mru<CR>
-" 常用セット
-nnoremap <silent> [unite]u :<C-u>Unite buffer file_mru<CR>
-" ブックマーク一覧
-nnoremap <silent> [unite]c :<C-u>Unite bookmark<CR>
-"ブックマークに追加
-nnoremap <silent> [unite]a :<C-u>UniteBookmarkAdd<CR>
-
-function! EnableUniteKeymap()
-  " escでuniteを終了
-  nmap <buffer> <ESC> <Plug>(unite_exit)
-
-  " 入力モードのときjjでノーマルモードに移動
-  imap <buffer> jj <Plug>(unite_insert_leave)
-  " 入力モードのときctrl+wでバックスラッシュも削除
-  imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
-  " sでsplit
-  nnoremap <silent><buffer><expr> s unite#smart_map('s', unite#do_action('split'))
-  inoremap <silent><buffer><expr> s unite#smart_map('s', unite#do_action('split'))
-  " vでvsplit
-  nnoremap <silent><buffer><expr> v unite#smart_map('v', unite#do_action('vsplit'))
-  inoremap <silent><buffer><expr> v unite#smart_map('v', unite#do_action('vsplit'))
-  " fでvimfiler
-  nnoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
-  inoremap <silent><buffer><expr> f unite#smart_map('f', unite#do_action('vimfiler'))
-endfunction
-autocmd FileType unite call EnableUniteKeymap()
+  nnoremap [unite];  :<C-u>Unite<Space>
+  nnoremap <silent> [unite]u  :<C-u>UniteWithBufferDir -buffer-name=files -prompt=>\  file<CR>
+  nnoremap <silent> [unite]f  :<C-u>UniteWithBufferDir -buffer-name=files -prompt=>\  file<CR>
+  nnoremap <silent> [unite]a  :<C-u>UniteWithCurrentDir -buffer-name=files -prompt=>\  file_mru file<CR>
+  nnoremap <silent> [unite]m  :<C-u>Unite -buffer-name=mru -prompt=>\  file_mru<CR>
+  nnoremap <silent> [unite]b  :<C-u>Unite -buffer-name=buffer -prompt=>\  buffer<CR>
+  nnoremap <silent> [unite]r  :<C-u>Unite -buffer-name=register -prompt=>\   register<CR>
+  nnoremap <silent> [unite]l  :<C-u>Unite -buffer-name=line -prompt=>\   line<CR>
+  nnoremap <silent> [unite]c  :<C-u>Unite -buffer-name=colorscheme -no-start-insert colorscheme<CR>
+  nnoremap <silent> [unite]o  :<C-u>Unite -buffer-name=outline -prompt=>\  outline<CR>
+  nnoremap <silent> [unite]rm :<C-u>Unite rails/model -prompt=>\   rails/model<CR>
+  nnoremap <silent> [unite]rc :<C-u>Unite rails/controller -prompt=>\   rails/controller<CR>
+  nnoremap <silent> [unite]rv :<C-u>Unite rails/view -prompt=>\   rails/view<CR>
+  nnoremap <silent> [unite]rh :<C-u>Unite rails/helper -prompt=>\   rails/helper<CR>
+  nnoremap <silent> [unite]rl :<C-u>Unite rails/lib -prompt=>\   rails/lib<CR>
+  nnoremap <silent> [unite]rd :<C-u>Unite rails/db -prompt=>\   rails/db<CR>
+  nnoremap <silent> [unite]rj :<C-u>Unite rails/javascript -prompt=>\   rails/javascript<CR>
+  nnoremap <silent> [unite]rs :<C-u>Unite rails/stylesheet -prompt=>\   rails/stylesheet<CR>
 
 
-"------------------------------------
-" vimfiler
-"------------------------------------
-
-"vimデフォルトのエクスプローラをvimfilerで置き換える
-let g:vimfiler_as_default_explorer = 1
-
-"セーフモードを無効にした状態で起動する
-let g:vimfiler_safe_mode_by_default = 0
-
-" <F3> で 現在開いているバッファのディレクトリを開く
-nnoremap <silent> <F3> :<C-u>VimFilerBufferDir -quit<CR>
-
-" <F2> でIDE風に開く
-nnoremap <silent> <F2> :VimFiler -buffer-name=explorer -split -simple -winwidth=35 -toggle -no-quit<Cr>
-
-autocmd! FileType vimfiler call g:my_vimfiler_settings()
-function! g:my_vimfiler_settings()
-  nmap     <buffer><expr><Cr> vimfiler#smart_cursor_map("\<Plug>(vimfiler_expand_tree)", "\<Plug>(vimfiler_edit_file)")
-  nnoremap <buffer>s          :call vimfiler#mappings#do_action('my_split')<Cr>
-  nnoremap <buffer>v          :call vimfiler#mappings#do_action('my_vsplit')<Cr>
-endfunction
-
-if exists('unite#custom_action')
-  let my_action = { 'is_selectable' : 1 }
-  function! my_action.func(candidates)
-    wincmd p
-    exec 'split '. a:candidates[0].action__path
+  function! EnableUniteKeymap()
+    " escでuniteを終了
+    nmap <silent><buffer> <ESC> <Plug>(unite_exit)
+    " 入力モードのときjjでノーマルモードに移動
+    imap <buffer> jj <Plug>(unite_insert_leave)
+    " 入力モードのときctrl+wでバックスラッシュも削除
+    imap <buffer> <C-w> <Plug>(unite_delete_backward_path)
+    " c-sでsplit
+    nnoremap <silent><buffer><expr> <C-l> unite#smart_map('s', unite#do_action('split'))
+    inoremap <silent><buffer><expr> <C-l> unite#smart_map('s', unite#do_action('split'))
+    " c-vでvsplit
+    nnoremap <silent><buffer><expr> <C-v> unite#smart_map('v', unite#do_action('vsplit'))
+    inoremap <silent><buffer><expr> <C-v> unite#smart_map('v', unite#do_action('vsplit'))
   endfunction
-  call unite#custom_action('file', 'my_split', my_action)
-
-  let my_action = { 'is_selectable' : 1 }
-  function! my_action.func(candidates)
-    wincmd p
-    exec 'vsplit '. a:candidates[0].action__path
-  endfunction
-  call unite#custom_action('file', 'my_vsplit', my_action)
+  if has('autocmd')
+    autocmd FileType unite call EnableUniteKeymap()
+  endif
 endif
+
+"------------------------------------
+" minibufexpl.vim
+"------------------------------------"
+
+if g:has_plugin( 'minibufexpl' )
+  
+  let g:miniBufExplModSelTarget = 1
+  let g:miniBufExplorerMoreThanOne = 2
+  let g:miniBufExplModSelTarget = 0
+  let g:miniBufExplUseSingleClick = 1
+  let g:miniBufExplMapWindowNavVim = 1
+  let g:miniBufExplVSplit = 15
+  let g:miniBufExplSplitBelow=1
+  
+  if has('autocmd')
+    autocmd BufRead,BufNew :call UMiniBufExplorer
+  endif
+
+  nnoremap <F3> :TMiniBufExplorer<cr>
+
+  nnoremap <silent> <C-d> :<C-u>bd<CR>
+  nnoremap <silent> <C-n> :<C-u>MBEbn<CR>
+  nnoremap <silent> <C-p> :<C-u>MBEbp<CR>
+
+  hi MBEVisibleActive guifg=#A6E22E guibg=fg ctermfg=118
+  hi MBEVisibleChangedActive guifg=#F1266F guibg=fg ctermfg=161
+  hi MBEVisibleChanged guifg=#960050 guibg=fg ctermfg=162
+  hi MBEVisibleNormal guifg=#66D9EF guibg=fg ctermfg=81
+  hi MBEChanged guifg=#E6DB74 guibg=fg ctermfg=229
+  hi MBENormal guifg=#808080 guibg=fg ctermfg=244
+endif
+
+
+
 
 "------------------------------------
 " syntastic
 "------------------------------------"
-let g:syntastic_enable_signs=1
-let g:syntastic_auto_loc_list=2
+
+if g:has_plugin( 'syntastic' )
+
+  let g:syntastic_enable_signs=1
+  let g:syntastic_auto_loc_list=2
 
 
-" let g:syntastic_enable_highlighting=0
-" let g:syntastic_auto_jump=1
-" let g:syntastic_enable_signs=1
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_mode_map = {
-      " \  'mode': 'active',
-      " \ 'active_filetypes': ['ruby', 'javascript'],
-      " \ 'passive_filetypes': ['html']
-      " \ }
-" let g:syntastic_javascript_checker = 'jshint'
+  " let g:syntastic_enable_highlighting=0
+  " let g:syntastic_auto_jump=1
+  " let g:syntastic_enable_signs=1
+  " let g:syntastic_auto_loc_list = 1
+  " let g:syntastic_mode_map = {
+  " " \  'mode': 'active',
+  " " \ 'active_filetypes': ['ruby', 'javascript'],
+  " " \ 'passive_filetypes': ['html']
+  " " \ }
+  " let g:syntastic_javascript_checker = 'jshint'
+
+endif
 
 
 "------------------------------------
 " quickrun
 "------------------------------------"
 
-let g:quickrun_no_default_key_mappings = 1
-nmap <Space>r <Plug>(quickrun)
+if g:has_plugin( 'quickrun' )
+  let g:quickrun_no_default_key_mappings = 1
+  nmap <Space>r <Plug>(quickrun)
 
-function! s:quickrun_of_buffer()
-  if !exists('b:quickrun_of_buffer')
-    let b:quickrun_of_buffer = ''
+  if has('autocmd')
+    autocmd FileType quickrun nnoremap <silent> <buffer> q :q<CR>
   endif
-  echo 'QuickRun' b:quickrun_of_buffer
-  execute 'QuickRun' b:quickrun_of_buffer
-endfunction
-autocmd FileType quickrun nnoremap <silent> <buffer> <ESC> :q<CR>
-"
+ 
+  let g:quickrun_config = {}
+  let g:quickrun_config._ = {'runner': 'vimproc', 'split': 'below:8'}
+  let g:quickrun_config['coffee'] = {'command': 'coffee', 'exec': '%c -cpb %s'}
+  let g:quickrun_config['ruby'] = {'command': 'ruby'}
+  let g:quickrun_config['ruby.rspec'] = {'command': "spec -l {line('.')}"}
+  let g:quickrun_config['php.wordpress'] = {'command': 'php'}
+  let g:quickrun_config['markdown'] = {
+        \ 'type': 'markdown/pandoc',
+        \ 'cmdopt': '-s',
+        \ 'outputter': 'browser'
+        \ }
+  let g:quickrun_config['textile'] = {
+        \ 'command': 'redcloth',
+        \ 'tempfile': '%{tempname()}.textile',
+        \ 'exec': ['%c %s > %s:p:r.html', 'open %s:p:r.html', 'sleep 1', 'rm %s:p:r.html'] }
 
-"------------------------------------
-" vim-ambicmd
-"------------------------------------
-
-" http://d.hatena.ne.jp/thinca/20110830/1314631439
-autocmd CmdwinEnter * call s:init_cmdwin()
-function! s:init_cmdwin()
-   inoremap <buffer> <expr> <Space> ambicmd#expand("\<Space>")
-   inoremap <buffer> <expr> <CR>    ambicmd#expand("\<CR>")
-startinsert!
-endfunction
-
-"------------------------------------
-" vim-rooter
-"------------------------------------
-
-" <Leader>cd でカレントディレクトリを移動（デフォルト）
-" map <silent> <unique> <Leader>cd <Plug>RooterChangeToRootDirectory
-" 一旦全部削除
-" autocmd! rooter
-" 標準では以下の拡張子で自動的に起動
-autocmd BufEnter *.rb,*.html,*.haml,*.slim,*.erb,*.rjs,*.css,*.less,*.scss,*.sass,*.js,*.coffee :Rooter
-" cd の代わりに lcd を使う
-let g:rooter_use_lcd = 1
-
-
-"------------------------------------
-" Autodate
-"------------------------------------
-
-let g:autodate_format = ': %FT%T%z'
-let g:autodate_keyword_pre = '$Date'
-let g:autodate_keyword_post = '\$'
-
-
-"------------------------------------
-" open-browser.vim
-"------------------------------------
-
-" カーソル下のURLをブラウザで開く
-nmap fu <Plug>(openbrowser-open)
-vmap fu <Plug>(openbrowser-open)
-
-" カーソル下のキーワードをググる
-nnoremap fs :<C-u>OpenBrowserSearch<Space><C-r><C-w><Enter>
-
-"------------------------------------
-" vim-powerline
-"------------------------------------
-let g:Powerline_symbols = 'fancy'
-let g:Powerline_mode_i  = '挿入'
-let g:Powerline_mode_R  = '置換'
-let g:Powerline_mode_n  = '通常'
-let g:Powerline_mode_v  = 'ビジュアル'
-let g:Powerline_mode_V  = '行ビジュアル'
-let g:Powerline_mode_cv = '矩形ビジュアル'
-let g:Powerline_mode_s  = '選択'
-let g:Powerline_mode_S  = '行選択'
-let g:Powerline_mode_cs = '矩形選択'
-
+endif
 
 "------------------------------------
 " NERD_commenter
 "------------------------------------
-"
-let g:NERDCreateDefaultMappings = 0
-let g:NERDSpaceDelims = 1
-let g:NERDShutUp = 1
 
-vmap <Space>cc <Plug>NERDCommenterToggle
-nmap <Space>cc <Plug>NERDCommenterToggle
-nmap <Space>ca <Plug>NERDCommenterAppend
-nmap <Space>c$ <Plug>NERDCommenterToEOL
-vmap <Space>cs <Plug>NERDCommenterSexy
-vmap <Space>cb <Plug>NERDCommenterMinimal
+if g:has_plugin( 'nerdcommenter' )
+  let g:NERDCreateDefaultMappings = 0
+  let g:NERDSpaceDelims = 1
+  let g:NERDShutUp = 1
 
-"------------------------------------
-" Align
-"------------------------------------
-
-let g:Align_xstrlen = 3
-let g:DrChiptopLvlMenu = ''
+  vmap <Space>cc <Plug>NERDCommenterToggle
+  nmap <Space>cc <Plug>NERDCommenterToggle
+  nmap <Space>ca <Plug>NERDCommenterAppend
+  nmap <Space>c$ <Plug>NERDCommenterToEOL
+  vmap <Space>cs <Plug>NERDCommenterSexy
+  vmap <Space>cb <Plug>NERDCommenterMinimal
+endif
 
 
 "------------------------------------
 " vim-textmanip
 "------------------------------------
 
-xmap <Space>d <Plug>(textmanip-duplicate-down)
-nmap <Space>d <Plug>(textmanip-duplicate-down)
-xmap <Space>D <Plug>(textmanip-duplicate-up)
-nmap <Space>D <Plug>(textmanip-duplicate-up)
+if g:has_plugin( 'textmanip' )
+  xmap <Space>d <Plug>(textmanip-duplicate-down)
+  nmap <Space>d <Plug>(textmanip-duplicate-down)
+  xmap <Space>D <Plug>(textmanip-duplicate-up)
+  nmap <Space>D <Plug>(textmanip-duplicate-up)
 
-xmap J <Plug>(textmanip-move-down)
-xmap K <Plug>(textmanip-move-up)
-xmap H <Plug>(textmanip-move-left)
-xmap L <Plug>(textmanip-move-right)
-
+  xmap J <Plug>(textmanip-move-down)
+  xmap K <Plug>(textmanip-move-up)
+  xmap H <Plug>(textmanip-move-left)
+  xmap L <Plug>(textmanip-move-right)
+endif
 
 "------------------------------------
 " vim-smartchr
 "------------------------------------
-" inoremap <buffer> ' ''<Esc>i
-" inoremap <buffer> " ""<Esc>i
-" inoremap <buffer> ( ()<Esc>i
-" inoremap <buffer> [ []<Esc>i
-" inoremap <buffer> { {}<Esc>i
 
-inoremap <buffer><expr> + smartchr#one_of('+', ' + ', '++')
-inoremap <buffer><expr> - smartchr#one_of('-', ' - ', '--')
-inoremap <buffer><expr> / smartchr#one_of('/', ' / ', '// ')
-inoremap <buffer><expr> & smartchr#one_of('&', ' & ', ' && ')
+if g:has_plugin( 'smartchr' )
+  inoremap <buffer><expr> + smartchr#loop('+', ' + ', '++')
+  inoremap <buffer><expr> - smartchr#loop('-', ' - ', '--')
+  inoremap <buffer><expr> / smartchr#loop('/', '/ ', '// ')
+  inoremap <buffer><expr> & smartchr#loop('&', ' & ', ' && ')
+  inoremap <buffer><expr> % smartchr#loop('%', ' % ', ' %% ')
 
-inoremap <buffer><expr> , smartchr#one_of(', ', ',')
+  inoremap <buffer><expr> , smartchr#one_of(', ', ',', ',<CR>')
 
-inoremap <buffer><expr> > smartchr#one_of('>', ' => ')
-inoremap <buffer><expr> = smartchr#one_of('=', ' = ', ' == ', ' === ')
-inoremap <buffer><expr> ! smartchr#one_of('!', ' != ')
-inoremap <buffer><expr> <Bar> smartchr#one_of('<Bar>', ' <Bar><Bar> ')
+  inoremap <buffer><expr> > smartchr#loop('>', ' => ', ' -> ')
+  inoremap <buffer><expr> = smartchr#loop('=', ' = ', ' == ', ' === ')
+  inoremap <buffer><expr> ! smartchr#loop('!', ' != ')
+  inoremap <buffer><expr> <Bar> smartchr#loop('<Bar>', ' <Bar> ', ' <Bar><Bar> ')
 
-inoremap <buffer><expr> ? smartchr#one_of('?', '? ')
-inoremap <buffer><expr> : smartchr#one_of(':', ': ', '::')
+  inoremap <buffer><expr> ? smartchr#loop('?', '? ')
+  inoremap <buffer><expr> : smartchr#loop(':', ': ', '::')
 
-inoremap <buffer><expr> } smartchr#one_of('}', '}<cr>')
-inoremap <buffer><expr> ; smartchr#one_of(';', ';<cr>')
-
-
-"------------------------------------
-" vim-ref
-"------------------------------------
-
-let g:ref_open = 'vsplit'
-let g:ref_phpmanual_path = $HOME.'/Reference/php/php-chunked-xhtml'
-let g:ref_no_default_key_mappings = 1
-
-nnoremap <C-i> :<C-u>vertical help<Space>
-nnoremap <C-i><C-i> :<C-u>vertical help<Space><C-r><C-w><CR>
-autocmd FileType help nnoremap q :q<CR>
-
-autocmd FileType ruby nnoremap <C-i> :<C-u>Ref refe<Space>
-autocmd FileType php nnoremap <C-i> :<C-u>Ref man<Space>
-autocmd FileType ruby,php nnoremap <C-i><C-i> :<C-u>call Ref('normal')<CR>
-autocmd FileType ruby,php vnoremap <C-i><C-i> :<C-u>call Ref('visual')<CR>
-
-function! Ref(mode)
-  if &filetype ==# 'vim'
-    execute 'silent! help ' . expand("<cword>")
-    if &filetype !=# 'help'
-      echo 'No entry'
-    endif
-  else
-    call ref#K(a:mode)
-  endif
-endfunction
-
-autocmd FileType ref nnoremap q :<C-u>close<CR>
-autocmd FileType ref nnoremap L <Plug>(ref-forward)
-autocmd FileType ref nnoremap H <Plug>(ref-back)
-autocmd FileType ref nnoremap <CR> <Plug>(ref-keyword)
-
-
-
+  inoremap <buffer><expr> ; smartchr#one_of(';', ';<CR>')
+  
+  inoremap <buffer><expr> } smartchr#one_of('}', '}<CR>')
+  
+  " inoremap <expr> <buffer> { smartchr#one_of('{', '#{' )
+  inoremap {<CR> <Space>{<CR>}<ESC>O
+endif
 
 "------------------------------------
-" YankRing.vim
+" vim-easymotion
 "------------------------------------"
-" http://nanasi.jp/articles/vim/yankring_vim.html
 
-"記録する履歴件数を100件に制限する
-" let g:yankring_max_history=100
-
-"ウィンドウの高さ調整
-" let g:yankring_window_height=13
-
-"保存先の変更
-" let g:yankring_history_dir=expand('$HOME')
-" let g:yankring_history_file='.yankring_history'
-
-"------------------------------------
-" minibufexpl.vim
-"------------------------------------"
-" http://nanasi.jp/articles/vim/minibufexpl_vim.html
-
-let g:miniBufExplMapWindowNavVim=1
-let g:miniBufExplSplitBelow=0
-let g:miniBufExplMapWindowNavArrows=1
-let g:miniBufExplMapCTabSwitchBufs=1
-let g:miniBufExplModSelTarget=1
-let g:miniBufExplSplitToEdge=1
-nnoremap <silent> <C-d> :<C-u>bd<CR>
-nnoremap <silent> <C-n> :<C-u>MBEbn<CR>
-nnoremap <silent> <C-p> :<C-u>MBEbp<CR>
-
-hi MBEVisibleActive guifg=#A6E22E guibg=fg ctermfg=118
-hi MBEVisibleChangedActive guifg=#F1266F guibg=fg ctermfg=161
-hi MBEVisibleChanged guifg=#960050 guibg=fg ctermfg=162
-hi MBEVisibleNormal guifg=#66D9EF guibg=fg ctermfg=81
-hi MBEChanged guifg=#E6DB74 guibg=fg ctermfg=229
-hi MBENormal guifg=#808080 guibg=fg ctermfg=244
-
+if g:has_plugin( 'easymotion' )
+  let g:EasyMotion_leader_key = '<Space>'
+  let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
+  let g:EasyMotion_grouping=1
+  hi EasyMotionTarget ctermbg=1 ctermfg=0
+  hi EasyMotionShade  ctermbg=none ctermfg=blue
+endif
 
 "------------------------------------
 " vim-indent-guides
 "------------------------------------"
-let g:indent_guides_enable_on_vim_startup = 1
-let g:indent_guides_guide_size = 1
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#454545 ctermbg=237
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#3E3E3E ctermbg=236
 
-
-"------------------------------------
-" Rsense
-"------------------------------------
-let g:rsenseUseOmniFunc = 1
-
-if !empty( $RSENSE_HOME ) && filereadable(expand( $RSENSE_HOME.'/bin/rsense'))
-  let g:rsenseHome = $RSENSE_HOME
-  let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+if g:has_plugin( 'indent-guides' )
+  let g:miniBufExplModSelTarget = 1
+  let g:indent_guides_enable_on_vim_startup = 1
+  let g:indent_guides_guide_size = 1
+  let g:indent_guides_auto_colors = 0
+  if has('autocmd')
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=#454545 ctermbg=237
+    autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=#3E3E3E ctermbg=236
+  endif
 endif
+
+"------------------------------------
+" vim-php-cs-fixer
+"------------------------------------"
+
+if g:has_plugin( 'php-cs-fixer' )
+  if executable(expand($HOME.'/.vim/bin/php-cs-fixer.phar'))
+    let g:php_cs_fixer_path = expand($HOME.'/.vim/bin/php-cs-fixer.phar')
+    " let g:php_cs_fixer_level = "all"
+    " let g:php_cs_fixer_config = "default"
+    " let g:php_cs_fixer_php_path = "php"
+    " let g:php_cs_fixer_fixers_list = ""
+    " let g:php_cs_fixer_enable_default_mapping = 1
+    " let g:php_cs_fixer_dry_run = 0
+    " let g:php_cs_fixer_verbose = 0
+
+    function! EnablePCFKeymap()
+      nnoremap <silent><leader>pcd :call PhpCsFixerFixDirectory()<CR>
+      nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
+    endfunction
+    if has('autocmd')
+      autocmd BufNewFile,BufRead *.php call EnablePCFKeymap()
+    endif
+  endif
+endif
+
 
 "------------------------------------
 " zencoding-vim
 "------------------------------------
 
-" <C-z>で展開
-let g:user_zen_expandabbr_key = '<C-z>'
+if g:has_plugin( 'zencoding' )
+  " <C-e>で展開
+  let g:user_zen_expandabbr_key = '<C-e>'
+  " 展開するHTMLの言語を設定
+  let g:user_zen_settings = {'lang' : 'ja'}
+endif
 
-" 展開するHTMLの言語を設定
-let g:user_zen_settings = {'lang' : 'ja'}
+"-----------------------------------
+" Autodate
+"------------------------------------
+
+let autodate_format = ': %Y/%m/%d %H:%M:%S'
+let autodate_keyword_pre = '\cLast Modified'
+let autodate_keyword_post = '$'
+
+"------------------------------------
+" open-browser.vim
+"------------------------------------
+
+if g:has_plugin( 'openbrowser' )
+  let g:netrw_nogx = 1 " disable netrw's gx mapping.
+  nmap gx <Plug>(openbrowser-smart-search)
+  vmap gx <Plug>(openbrowser-smart-search)
+endif
 
 
 "------------------------------------
-" vim-css-color
+" vim-powerline
 "------------------------------------
-let g:cssColorVimDoNotMessMyUpdatetime = 1
+
+
+if g:has_plugin( 'powerline' )
+  let g:Powerline_symbols = 'fancy'
+  let g:Powerline_mode_i  = '挿入'
+  let g:Powerline_mode_R  = '置換'
+  let g:Powerline_mode_n  = '通常'
+  let g:Powerline_mode_v  = 'ビジュアル'
+  let g:Powerline_mode_V  = '行ビジュアル'
+  let g:Powerline_mode_cv = '矩形ビジュアル'
+  let g:Powerline_mode_s  = '選択'
+  let g:Powerline_mode_S  = '行選択'
+  let g:Powerline_mode_cs = '矩形選択'
+endif
+
+"------------------------------------
+" vim-phpdoc
+"------------------------------------
+if g:has_plugin( 'phpdoc.vim' )
+  if has('autocmd')
+    " autocmd FileType php inoremap <Space>cd <ESC>:call PhpDocSingle()<CR>i
+    autocmd FileType php nnoremap <Space>cd :call PhpDocSingle()<CR>
+    autocmd FileType php vnoremap <Space>cd :call PhpDocRange()<CR>
+  endif
+  let g:pdv_cfg_Author = g:username. ' <'. g:email .'>'
+  let g:pdv_cfg_Copyright = "Copyright (c) ".strftime("%Y")
+  let g:pdv_cfg_Type = "mixed"
+  let g:pdv_cfg_Package = ""
+  let g:pdv_cfg_Version = "$id$"
+  let g:pdv_cfg_Copyright = ""
+  let g:pdv_cfg_License = ""
+  let g:pdv_cfg_php4always = 0
+endif
 
 "------------------------------------
 " FileType
 "------------------------------------
-autocmd BufNewFile,BufRead *.less setlocal filetype=less
-autocmd BufNewFile,BufRead *.scss setlocal filetype=scss
-autocmd BufNewFile,BufRead *.coffee set filetype=coffee
-autocmd BufNewFile,BufRead *.slim set filetype=slim
-autocmd BufNewFile,BufRead Makefile.rule set filetype=make
-autocmd BufNewFile,BufRead *vimperatorrc*,*.vimp set filetype=vimperator
-
-
-
-if filereadable(expand("~/.vimrc.local"))
-    source ~/.vimrc.local
+if has('autocmd')
+  autocmd BufNewFile,BufRead,BufReadPre *.sass set filetype=sass
+  autocmd BufNewFile,BufRead,BufReadPre *.less set filetype=less
+  autocmd BufNewFile,BufRead,BufReadPre *.scss set filetype=scss
+  autocmd BufNewFile,BufRead,BufReadPre *.coffee set filetype=coffee
+  autocmd BufNewFile,BufRead,BufReadPre *.slim set filetype=slim
+  autocmd BufNewFile,BufRead,BufReadPre *.haml set filetype=haml
+  autocmd BufNewFile,BufRead,BufReadPre Makefile.rule set filetype=make
+  autocmd BufNewFile,BufRead,BufReadPre *.ctp set filetype=php
 endif
+
+
+" ルートディレクトリの固有ファイル有無でファイルタイプ判断したい ( vim-rooter とか？)
+" とりあえず今は場合に応じこれコメントアウトかモードラインに書く
+if has('autocmd')
+  autocmd BufNewFile,BufRead,BufReadPre *.php set filetype=php.wordpress
+  autocmd FileType php.wordpress setlocal syntax=wordpress
+  autocmd FileType php.wordpress EnableFastPHPFolds
+endif
+

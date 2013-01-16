@@ -6,7 +6,7 @@ set columns=90
 set background=dark
 
 if has('gui_macvim')
-  set guifont=Ricty:h16
+  set guifont=Source\ Code\ Pro\ for\ Powerline:h16
   " <C-Enter> でフルスクリーンをトグル
   nnoremap <C-Return> :set invfullscreen<CR>
 

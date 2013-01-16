@@ -1,7 +1,7 @@
 #!/bin/zsh
 #
 # $File: ${DOTDIR}/vim/vim.darwin.zsh
-# $Date: 2013-01-09T02:33:27+0900$
+# $Date: 2013-01-13T20:42:24+0900$
 # vim:filetype=zsh:tabstop=2:shiftwidth=2:fdm=marker:
 
 # for MacVim Kaoriya
@@ -10,18 +10,41 @@
 
 if which vim >/dev/null 2>&1 ; then
 
-  MACVIM="/Applications/MacVim.app/Contents/MacOS/Vim"
+  MACVIM="/Applications/MacVim.app"
 
-  if [ -e "${MACVIM}" ]; then
-    alias {v,vi,vim}='env LANG=ja_JP.UTF-8 '$MACVIM' "$@"'
-    export EDITOR=vim
-    compdef _vim vim
-    compdef _vim vi
-    compdef _vim v
+  if [ -e "${MACVIM}/Contents/MacOS/Vim" ]; then
+
+    function __vim() {
+      local dovim=$MACVIM/Contents/MacOS/Vim
+      if [[ ${#@} = 0 ]]; then
+        env LANG=ja_JP.UTF-8  $dovim
+      else
+        env LANG=ja_JP.UTF-8  $dovim "$@"
+      fi
+    }
+
+    alias {v,vi,vim}=__vim
+    export EDITOR=__vim
+
   fi
 
-  if which mvim >/dev/null 2>&1 ; then
-    alias {gv,gvim}=mvim
-    compdef _vim gvim
+
+  if [ -x "${MACVIM}/Contents/MacOS/mvim" ]; then
+
+   function __gvim() {
+      local dogvim=$MACVIM/Contents/MacOS/mvim
+      if [[ ${#@} = 0 ]]; then
+        env LANG=ja_JP.UTF-8 $dogvim
+      else
+        env LANG=ja_JP.UTF-8 $dogvim "$@"
+      fi
+    }
+
+    alias {gv,gvim}=__gvim
   fi
 fi
+
+
+
+
+
