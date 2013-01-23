@@ -2,7 +2,7 @@
 "=============================================================================
 " FILE: .vimrc
 " AUTHOR: Ayumi Fujii <fujimogn@gmail.com>
-" Last Modified: 2013/01/16 04:06:28
+" Last Modified: 2013/01/21 06:56:20
 "=============================================================================
 
 
@@ -779,10 +779,18 @@ if g:has_plugin( 'quickrun' )
   let g:quickrun_config['ruby'] = {'command': 'ruby'}
   let g:quickrun_config['ruby.rspec'] = {'command': "spec -l {line('.')}"}
   let g:quickrun_config['php.wordpress'] = {'command': 'php'}
+  " let g:quickrun_config['markdown'] = {
+        " \ 'type': 'markdown/pandoc',
+        " \ 'cmdopt': '-s',
+        " \ 'outputter': 'browser'
+        " \ }
+  " via: http://blog.glidenote.com/blog/2013/01/10/vim-quickrun-marked/
   let g:quickrun_config['markdown'] = {
-        \ 'type': 'markdown/pandoc',
-        \ 'cmdopt': '-s',
-        \ 'outputter': 'browser'
+        \ 'outputter' : 'null',
+        \ 'command'   : 'open',
+        \ 'cmdopt'    : '-a',
+        \ 'args'      : 'Marked',
+        \ 'exec'      : '%c %o %a %s',
         \ }
   let g:quickrun_config['textile'] = {
         \ 'command': 'redcloth',
